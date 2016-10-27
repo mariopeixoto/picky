@@ -9,7 +9,7 @@
 
     <modules>
         <module>picky-core</module>
-        <module>maven-picky-plugin</module>
+        <module>picky-maven-plugin</module>
     </modules>
 
 
