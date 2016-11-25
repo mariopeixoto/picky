@@ -1,19 +1,14 @@
 package com.picky.core.asm;
 
-import com.picky.core.api.DependencyBookkeeper;
-import com.picky.core.impl.PickyDependencyBookkeeper;
 import com.picky.util.ASMUtil;
 import org.objectweb.asm.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
 
 public class PickyClassVisitor implements ClassVisitor {
 
-    private static final Logger logger = LoggerFactory.getLogger(PickyClassVisitor.class);
+//    private static final Logger logger = LoggerFactory.getLogger(PickyClassVisitor.class);
     
     private PickyVisitorHelper helper;
 
@@ -31,11 +26,11 @@ public class PickyClassVisitor implements ClassVisitor {
     }
 
     public PickyClassVisitor() {
-        this(new PickyVisitorHelper());
+        this(PickyVisitorHelper.getInstance());
     }
 
     public void visit(int version, int access, String name, String signature, String  superName, String[] interfaces) {
-        logger.debug("Visit: ({}, {}, {}, {}, {}, {})", version, access, name, signature, superName, interfaces);
+//        logger.debug("Visit: ({}, {}, {}, {}, {}, {})", version, access, name, signature, superName, interfaces);
 
         this.helper.setCurrentClass(this.helper.getFullyQualifiedName(name));
 
@@ -48,15 +43,15 @@ public class PickyClassVisitor implements ClassVisitor {
     }
 
     public void visitSource(String source, String debug) {
-        logger.debug("Visit Source: ({}, {})", source, debug);
+//        logger.debug("Visit Source: ({}, {})", source, debug);
     }
 
     public void visitOuterClass(String owner, String name, String desc) {
-        logger.debug("Visit Outer Class: ({}, {}, {})", owner, name, desc);
+//        logger.debug("Visit Outer Class: ({}, {}, {})", owner, name, desc);
     }
 
     public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
-        logger.debug("Visit Annotation: ({}, {})", desc, visible);
+//        logger.debug("Visit Annotation: ({}, {})", desc, visible);
 
         this.helper.addDependency(ASMUtil.getType(desc));
 
@@ -64,15 +59,18 @@ public class PickyClassVisitor implements ClassVisitor {
     }
 
     public void visitAttribute(Attribute attr) {
-        logger.debug("Visit Attribute: ({})", attr);
+//        logger.debug("Visit Attribute: ({})", attr);
     }
 
     public void visitInnerClass(String name, String outerName, String innerName, int access) {
-        logger.debug("Visit Inner Class: ({}, {}, {}, {})", name, outerName, innerName, access);
+//        logger.debug("Visit Inner Class: ({}, {}, {}, {})", name, outerName, innerName, access);
+//        System.out.println("Visit Inner Class: (" + name + ", " + outerName + ", " + innerName + ", " + access + ")");
     }
 
     public FieldVisitor visitField(int access, String name, String desc, String signature, Object value) {
-        logger.debug("Visit Field: ({}, {}, {}, {}, {})", access, name, desc, signature, value);
+//        logger.debug("Visit Field: ({}, {}, {}, {}, {})", access, name, desc, signature, value);
+
+//        System.out.println("Visit Field: (" + access + ", " + name + ", " + desc + ", " + signature + ", " + value  + ")");
 
         if (signature == null) this.helper.addDependency(ASMUtil.getType(desc));
         else this.helper.visitTypeSignature(signature, this.signatureVisitor);
@@ -81,7 +79,7 @@ public class PickyClassVisitor implements ClassVisitor {
     }
 
     public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
-        logger.debug("Visit Method: ({}, {}, {}, {}, {})", access, name, desc, signature, exceptions);
+//        logger.debug("Visit Method: ({}, {}, {}, {}, {})", access, name, desc, signature, exceptions);
 
         if (signature == null) {
             this.helper.addDependency(ASMUtil.getReturnType(desc));
@@ -98,7 +96,7 @@ public class PickyClassVisitor implements ClassVisitor {
     }
 
     public void visitEnd() {
-        logger.debug("Visit End");
+//        logger.debug("Visit End");
     }
 
     public Collection<String> getDependencies(String clazz) {

@@ -1,12 +1,12 @@
-package com.picky.core;
+package com.picky.sample;
 
 public class GeneralException extends RuntimeException {
 
-    public GeneralException(String message) {
-        super(message);
+    GeneralException(String message) {
+        super(message + "x");
     }
 
-    public GeneralException(String message, Throwable e) {
+    GeneralException(String message, Throwable e) {
         super(message, e);
     }
 

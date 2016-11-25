@@ -10,6 +10,7 @@
     <modules>
         <module>picky-core</module>
         <module>picky-maven-plugin</module>
+        <module>picky-sample-project</module>
     </modules>
 
 </project>

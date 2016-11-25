@@ -4,21 +4,18 @@ import com.picky.core.api.DependencyBookkeeper;
 import com.picky.core.impl.PickyDependencyBookkeeper;
 import org.objectweb.asm.signature.SignatureReader;
 import org.objectweb.asm.signature.SignatureVisitor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 public class PickyVisitorHelper {
 
-    private static final Logger logger = LoggerFactory.getLogger(PickyMethodVisitor.class);
+    private static final PickyVisitorHelper instance = new PickyVisitorHelper();
 
     private DependencyBookkeeper dependencyBookkeeper;
     private String currentClass;
 
-    public PickyVisitorHelper() {
+    private PickyVisitorHelper() {
         this.dependencyBookkeeper = new PickyDependencyBookkeeper();
     }
 
@@ -46,10 +43,13 @@ public class PickyVisitorHelper {
     }
 
     public Collection<String> getFullyQualifiedNames(Collection<String> classes) {
-        return classes.stream()
-            .filter(Objects::nonNull)
-            .map(elm -> getFullyQualifiedName(elm))
-            .collect(Collectors.toList());
+        Collection<String> fullyQualified = new ArrayList<String>();
+        for (String c : classes) {
+            if (c != null) {
+                fullyQualified.add(getFullyQualifiedName(c));
+            }
+        }
+        return fullyQualified;
     }
 
     public void visitSignature(String signature, SignatureVisitor visitor) {
@@ -62,5 +62,9 @@ public class PickyVisitorHelper {
         if (signature != null) {
             new SignatureReader(signature).acceptType(visitor);
         }
+    }
+
+    public static PickyVisitorHelper getInstance() {
+        return instance;
     }
 }

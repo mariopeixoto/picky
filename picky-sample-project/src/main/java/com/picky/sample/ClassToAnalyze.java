@@ -1,22 +1,21 @@
-package com.picky.core.mock;
+package com.picky.sample;
 
-import com.picky.core.GeneralException;
-import com.picky.core.api.HashCalculator;
-import com.picky.core.mock.MockClazz;
-
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.InputStream;
 import java.security.MessageDigest;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Formatter;
 import java.util.List;
 
-public class ClassToAnalyze implements HashCalculator {
+public class ClassToAnalyze {
 
     private MockClazz.MockEnum mockEnum = MockClazz.MockEnum.ONE;
-    private List<String> list = Arrays.asList("1", "2", "3");
-    private List<MockClazz> list2;
+    private List<String> list = Arrays.asList("1", "2");
+    private List<MockClazz> list2 = new ArrayList<MockClazz>();
+    private MockClazz mockClas = new MockClazz();
 
-    public String calculate (@MockAnnotation final InputStream file) {
+    public String calculate (final InputStream file) {
         try {
             final MessageDigest messageDigest = MessageDigest.getInstance("SHA1");
 

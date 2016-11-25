@@ -1,4 +1,4 @@
-package com.picky.core.mock;
+package com.picky.sample;
 
 public @interface MockAnnotation {
 }

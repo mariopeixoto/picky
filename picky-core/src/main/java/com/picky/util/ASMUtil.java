@@ -1,16 +1,11 @@
 package com.picky.util;
 
 import org.objectweb.asm.Type;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.stream.Collectors;
 
 public class ASMUtil {
-
-    private static final Logger logger = LoggerFactory.getLogger(ASMUtil.class);
 
     public static String getType(String clazz) {
         return getType(Type.getType(clazz));
@@ -21,9 +16,11 @@ public class ASMUtil {
     }
 
     public static Collection<String> getArgumentTypes(String method) {
-        return Arrays.asList(Type.getArgumentTypes(method)).stream()
-            .map(t -> getType(t))
-            .collect(Collectors.toList());
+        Collection<String> argumentTypes = new ArrayList<String>();
+        for (Type t : Type.getArgumentTypes(method)) {
+            argumentTypes.add(getType(t));
+        }
+        return argumentTypes;
     }
 
     public static String getObjectType(String clazz) {
@@ -31,9 +28,11 @@ public class ASMUtil {
     }
 
     public static Collection<String> getObjectTypes(Collection<String> classes) {
-        return classes.stream()
-            .map(c -> getObjectType(c))
-            .collect(Collectors.toList());
+        Collection<String> objectTypes = new ArrayList<String>();
+        for(String c : classes) {
+            objectTypes.add(getObjectType(c));
+        }
+        return objectTypes;
     }
 
     public static String getType(Type t) {
