@@ -26,6 +26,9 @@ public class PickySelectMojo extends PickyAbstractMojo {
 
         Picky picky = super.setupPicky();
         List<String> nonAffectedTestClasses = picky.findNonAffectedTests();
+
+        getLog().info("Found " + nonAffectedTestClasses.size() + " non affected test classes");
+
         this.appendExclusions(nonAffectedTestClasses);
 
         this.loadAgent();

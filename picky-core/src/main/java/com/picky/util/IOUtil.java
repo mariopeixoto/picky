@@ -12,10 +12,14 @@ import java.util.Properties;
 public class IOUtil {
 
     public static InputStream getClassFile(Class<?> clazz) {
-        String name = clazz.getName().replace('.', '/') + ".class";
-        InputStream file = clazz.getClassLoader().getResourceAsStream(name);
+        try {
+            String name = clazz.getName().replace('.', '/') + ".class";
+            InputStream file = clazz.getClassLoader().getResourceAsStream(name);
 
-        return file;
+            return file;
+        } catch (Exception e) {
+            throw new GeneralException("Could not load class" + clazz + " file", e);
+        }
     }
 
     public static Collection<String> readLines(File file) {

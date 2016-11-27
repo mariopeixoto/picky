@@ -57,7 +57,7 @@ public class TestSelectorImpl implements TestSelector {
         Set<Class<?>> newTests = new HashSet<Class<?>>();
 
         for (Class<?> testClass : testClasses) {
-            if (dependencies.getDependencies(testClass) == null) {
+            if (testClass != null && dependencies.getDependencies(testClass.getName()) == null) {
                 newTests.add(testClass);
             }
         }
@@ -71,7 +71,7 @@ public class TestSelectorImpl implements TestSelector {
         dependencyTracker.computeNewHashes(dependencies);
 
         for (Class<?> testClass : testClasses) {
-            if (dependencies.isAffected(testClass)) {
+            if (dependencies.isAffected(testClass.getName())) {
                 affectedTests.add(testClass);
             }
         }

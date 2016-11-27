@@ -1,6 +1,7 @@
 package com.picky.core.impl;
 
 import com.picky.core.api.TestFinder;
+import junit.framework.TestCase;
 import org.junit.Test;
 import org.reflections.Reflections;
 
@@ -24,6 +25,8 @@ public class TestFinderImpl implements TestFinder {
         for (Method m : testMethods) {
             classes.add(m.getDeclaringClass());
         }
+
+        classes.addAll(reflections.getSubTypesOf(TestCase.class));
 
         return classes;
     }

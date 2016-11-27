@@ -5,7 +5,7 @@
     <parent>
         <artifactId>picky</artifactId>
         <groupId>com.picky</groupId>
-        <version>0.1-SNAPSHOT</version>
+        <version>0.1</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -43,7 +43,7 @@
             <plugin>
                 <groupId>com.picky</groupId>
                 <artifactId>picky-maven-plugin</artifactId>
-                <version>0.1-SNAPSHOT</version>
+                <version>0.1</version>
                 <executions>
                     <execution>
                         <id>picky</id>

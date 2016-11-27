@@ -11,12 +11,15 @@ import org.codehaus.plexus.classworlds.realm.ClassRealm;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.reflections.Reflections;
 import org.reflections.scanners.MethodAnnotationsScanner;
+import org.reflections.scanners.SubTypesScanner;
 import org.reflections.util.ConfigurationBuilder;
 
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public abstract class PickyAbstractMojo extends AbstractMojo {
 
@@ -42,30 +45,34 @@ public abstract class PickyAbstractMojo extends AbstractMojo {
     }
 
     protected Picky setupPicky() throws MojoExecutionException {
-        List<URL> urls = loadTestClasspath();
-        Reflections reflections = setupReflections(urls);
-        return new Picky(reflections);
+        try {
+//            loadClasspath(this.project.getCompileClasspathElements());
+            Set<URL> urls = loadClasspath(this.project.getTestClasspathElements());
+            Reflections reflections = setupReflections(urls);
+            return new Picky(reflections);
+        } catch (Exception e) {
+            throw new MojoExecutionException("Could not setup picky", e);
+        }
     }
 
     private File getPickyDir() {
         return new File(this.basedir.getAbsolutePath() + File.separator + ".picky");
     }
 
-    private Reflections setupReflections(List<URL> urls) {
+    private Reflections setupReflections(Set<URL> urls) {
         ConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
         configurationBuilder.setUrls(urls);
-        configurationBuilder.setScanners(new MethodAnnotationsScanner());
+        configurationBuilder.setScanners(new MethodAnnotationsScanner(), new SubTypesScanner());
         return new Reflections(configurationBuilder);
     }
 
-    private List<URL> loadTestClasspath() throws MojoExecutionException {
-        List<URL> urls = new ArrayList<URL>();
+    private Set<URL> loadClasspath(List<String> classpathElements) throws MojoExecutionException {
+        Set<URL> urls = new HashSet<URL>();
 
         try {
-            List<String> testClasspathElements = this.project.getTestClasspathElements();
             ClassRealm realm = this.descriptor.getClassRealm();
 
-            for (String element : testClasspathElements)
+            for (String element : classpathElements)
             {
                 File elementFile = new File(element);
                 URL el = elementFile.toURI().toURL();

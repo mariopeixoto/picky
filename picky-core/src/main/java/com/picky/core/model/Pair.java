@@ -25,4 +25,11 @@ public class Pair<T, K> {
         return this.param2;
     }
 
+    @Override
+    public String toString() {
+        return "Pair{" +
+                "param1=" + param1 +
+                ", param2=" + param2 +
+                '}';
+    }
 }

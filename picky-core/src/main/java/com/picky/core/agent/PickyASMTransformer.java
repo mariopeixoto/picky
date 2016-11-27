@@ -25,9 +25,9 @@ public class PickyASMTransformer implements ClassFileTransformer {
     private PickyVisitorHelper helper;
     private Properties dependencies;
 
-    public PickyASMTransformer() {
+    public PickyASMTransformer(Properties dependencies) {
         this.helper = PickyVisitorHelper.getInstance();
-        this.dependencies = new Properties();
+        this.dependencies = dependencies;
     }
 
     @Override

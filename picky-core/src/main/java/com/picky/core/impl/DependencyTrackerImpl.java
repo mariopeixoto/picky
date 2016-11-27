@@ -49,14 +49,14 @@ public class DependencyTrackerImpl implements DependencyTracker {
                 props.load(new FileInputStream(dependencies));
 
                 for (String prop : props.stringPropertyNames()) {
-                    Collection<String> deps = Arrays.asList(props.getProperty(prop).split(","));
-                    Collection<Class<?>> depsClasses = new ArrayList<Class<?>>();
-                    for (String dep : deps) {
+                    Collection<String> depsImmutable = Arrays.asList(props.getProperty(prop).split(","));
+                    Collection<String> deps = new ArrayList<String>();
+                    for (String dep : depsImmutable ){
                         if (StringUtils.isNotBlank(dep)) {
-                            depsClasses.add(Class.forName(dep));
+                            deps.add(dep);
                         }
                     }
-                    dependencyMap.putDependency(Class.forName(prop), depsClasses);
+                    dependencyMap.putDependency(prop, deps);
                 }
             } else {
                 dependencies.createNewFile();
@@ -74,7 +74,7 @@ public class DependencyTrackerImpl implements DependencyTracker {
                 props.load(new FileInputStream(hashes));
 
                 for (String prop : props.stringPropertyNames()) {
-                    dependencyMap.putHash(Class.forName(prop), props.getProperty(prop));
+                    dependencyMap.putHash(prop, props.getProperty(prop));
                 }
             } else {
                 hashes.createNewFile();
@@ -86,11 +86,16 @@ public class DependencyTrackerImpl implements DependencyTracker {
 
     @Override
     public void computeNewHashes(DependencyMap dependencies) {
-        for (Class<?> clazz : dependencies.getCurrentClassWithHashes()) {
+        for (String clazz : dependencies.getCurrentClassWithHashes()) {
             Pair<String, String> hashes = dependencies.getHashPair(clazz);
             if (hashes.getParam2() == null) {
-                String newHash = this.hashCalculator.calculate(IOUtil.getClassFile(clazz));
-                hashes.setParam2(newHash);
+                try {
+                    Class<?> classObj = Class.forName(clazz);
+                    String newHash = this.hashCalculator.calculate(IOUtil.getClassFile(classObj));
+                    hashes.setParam2(newHash);
+                } catch (ClassNotFoundException e) {
+                    //Class has been deleted, new hash must be null, which already is. So, ignore
+                }
             }
         }
     }
@@ -99,10 +104,7 @@ public class DependencyTrackerImpl implements DependencyTracker {
     public void saveHashes(DependencyMap dependencies) {
         Properties props = new Properties();
 
-        for (Class<?> clazz : dependencies.getAllReferencedClasses()) {
-            String newHash = this.hashCalculator.calculate(IOUtil.getClassFile(clazz));
-            props.put(clazz.getName(), newHash);
-        }
+        computeHashes(dependencies, props);
 
         try {
             File hashesFile = new File(Config.hashesFilePath);
@@ -113,5 +115,38 @@ public class DependencyTrackerImpl implements DependencyTracker {
         } catch (Exception e) {
             throw new GeneralException(e);
         }
+    }
+
+    private void computeHashes(DependencyMap dependencies, Properties props) {
+        Set<String> classes = dependencies.getAllReferencedClasses();
+        List<String> tryLater = computeHashes(classes, props);
+        if (tryLater.size() > 0) {
+            int size = classes.size();
+            while (size > tryLater.size()) {
+                size = tryLater.size();
+                Collections.reverse(tryLater);
+                tryLater = computeHashes(tryLater, props);
+            }
+        }
+    }
+
+    private List<String> computeHashes(Collection<String> classes, Properties props) {
+        List<String> tryLater = new ArrayList<String>();
+        for (String clazz : classes) {
+            try {
+                Class<?> classObj = Class.forName(clazz);
+                String newHash = this.hashCalculator.calculate(IOUtil.getClassFile(classObj));
+                props.put(clazz, newHash);
+            } catch (ClassNotFoundException e) {
+                //Class has been deleted, class must not be included in the hash file. So, ignore
+            } catch (ExceptionInInitializerError e) {
+                //Save it for later
+                tryLater.add(clazz);
+            } catch (Throwable e) {
+                //Ignore class
+            }
+        }
+
+        return tryLater;
     }
 }
