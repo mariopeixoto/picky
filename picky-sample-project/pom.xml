@@ -49,25 +49,11 @@
                         <id>picky</id>
                         <goals>
                             <goal>select</goal>
-                            <goal>wrapup</goal>
+                            <goal>collect</goal>
                         </goals>
                     </execution>
                 </executions>
             </plugin>
-            <!--<plugin>-->
-                <!--<groupId>org.ekstazi</groupId>-->
-                <!--<artifactId>ekstazi-maven-plugin</artifactId>-->
-                <!--<version>4.6.1</version>-->
-                <!--<executions>-->
-                    <!--<execution>-->
-                        <!--<id>ekstazi</id>-->
-                        <!--<goals>-->
-                            <!--<goal>select</goal>-->
-                            <!--<goal>restore</goal>-->
-                        <!--</goals>-->
-                    <!--</execution>-->
-                <!--</executions>-->
-            <!--</plugin>-->
         </plugins>
     </build>
 

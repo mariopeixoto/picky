@@ -16,10 +16,10 @@ import java.io.File;
 import java.util.*;
 
 @Mojo(
-    name = "wrapup",
+    name = "collect",
     defaultPhase = LifecyclePhase.TEST
 )
-public class PickyWrapUpMojo extends PickyAbstractMojo {
+public class PickyCollectMojo extends PickyAbstractMojo {
 
     public void execute() throws MojoExecutionException, MojoFailureException {
         Config.loadConfig(super.basedir);
