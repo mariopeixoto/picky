@@ -1,1 +1,1 @@
-# picky
+### Picky: Lightweight Regression Test Selection for Java Applications
